@@ -267,7 +267,7 @@ template sha256_12_coordinates(n, k) {
     }
 
     // preimage bit length accumulator
-    var preimage_bit_len  = 0;
+    var preimage_bytes_length = 0;
 
     // decompose coordinates inputs into binary
     component binary[6*33];
@@ -275,7 +275,7 @@ template sha256_12_coordinates(n, k) {
         for (var j = 0; j < 33; j++) { // for each byte
             binary[33*i + j] = Num2Bits(8);
             binary[33*i + j].in <== compressors[i].compressed[j];
-            preimage_bit_len += 1;
+            preimage_bytes_length += 1;
         }
     }
 
@@ -284,7 +284,7 @@ template sha256_12_coordinates(n, k) {
     // check whether the preimage bit length is equal to the message bits 
     component is_eq = IsEqual();
     is_equal.in[0] <== message_bits;
-    is_equal.in[1] <== preimage_bit_len;
+    is_equal.in[1] <== preimage_bytes_length * 8; //converting bytes length to bits length
     is_equal.out === 1;
 
     var total_bits = (message_bits \ 512) * 512;
